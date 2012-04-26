@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="phonegap.js"></script>
+<script>
+
+function uploadPhoto(imageURI) {
+
+function win(r) {
+    alert('Image uploaded successfully!')
+}
+
+function fail(err) {
+    alert("Ruh roh. Image failed to upload! Errorcode: " = err.code)
+}
+
+var opts = new FileUploadOptions();
+opts.fileKey  = "file";
+opts.fileName = imageURI.substr(imageURI.lastIndexOf('/')+1);
+opts.mimeType = "image/jpeg";
+opts.params   = {};
+
+var ft = new FileTransfer();
+    ft.upload(imageURI, "http://deep-flower-8321.herokuapp.com", win, fail, opts);
+}
+
+function win(photo) {
+    uploadPhoto(photo)
+}
+
+function fail(err) {
+    navigator.notification.alert('Uh oh!')
+}
+
+function snap() {
+    var opts = { 
+        targetWidth: 300, 
+        targetHeight: 300, 
+        destinationType : Camera.DestinationType.FILE_URI 
+    }
+
+    navigator.camera.getPicture(win, fail, opts)
+}
+
+</script>
+
+<button onclick="snap()" style="font-size:2em; margin:0 auto 0 auto;">Capture Image</button>
+
+</body>
+</html>
