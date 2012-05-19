@@ -1,0 +1,2 @@
+#!/bin/sh
+open /Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --args --disable-web-security http://localhost:3333

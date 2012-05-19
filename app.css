@@ -1,0 +1,89 @@
+body {
+    margin:0;
+    padding:0;
+    display:block;
+    height:100%;
+    background-color:#000;
+}
+
+header {
+    margin:0;
+    padding:10px;
+    background: -moz-linear-gradient(-90deg,#003471,#448CCB);
+    background: -webkit-gradient(linear, left top, left bottom, from(#003471), to(#448CCB));
+    
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    display: -moz-box;
+    -moz-box-orient: horizontal;
+    display: box;
+    box-orient: horizontal;
+}
+
+header h1 {
+    margin:0;
+    text-align:center;
+    line-height:50px;
+    font-family: Rockwell, Georgia, "Times New Roman", Times, serif;
+    font-size: 2em;
+    color: #fff;
+    text-shadow: rgba(0,0,0,0.5) -1px 0, rgba(0,0,0,0.3) 0 -1px, rgba(255,255,255,0.5) 0 1px, rgba(0,0,0,0.3) -1px -2px;
+    height:60px;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+}
+
+header button {
+    height:60px;
+    width:100px;
+    background:none;
+    border:none;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+}
+
+header button img {
+    width:48px;
+    opacity:.7;
+}
+
+#pics {
+    position:absolute;
+    top:75px;
+    background:#fff;
+    min-width:480px;
+    margin:0 auto 0 auto;
+    padding:5px 0 0 0;
+    text-align:center;
+}
+
+.pic {
+    border:5px solid #fff;
+    margin:0;
+    padding:0
+}
+
+#tools {
+    background:#fff;
+    border:1px solid #eaeaea;
+    border-radius:10px;
+    padding:5px;
+    margin:5px;
+}
+
+@-webkit-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to { 
+        -webkit-transform: rotate(360deg);
+    }
+}
+.loading {
+    -webkit-animation-name:             rotate; 
+    -webkit-animation-duration:         1.5s; 
+    -webkit-animation-iteration-count:  infinite;
+    -webkit-animation-timing-function: linear;
+}
