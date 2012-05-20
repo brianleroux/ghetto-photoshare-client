@@ -43,9 +43,15 @@
                 $('#snap-divider').hide()
             }
             else {
+                // we are on the desktop; do an ajaxy file upload
                 $('#snap').remove()
                 $('#tools').append('<li><a id=snap><input id=fileselect type=file accept=image/*;capture=camera></a></li>')
                 $('#fileselect').on('change', App.formPost)
+                // also add tap event to desktop
+                $(document).delegate('body', 'click', function(e) {
+                    console.log(e.target)
+                    $(e.target).trigger('tap')
+                })
             }
 
             // load the home screen mosaic
