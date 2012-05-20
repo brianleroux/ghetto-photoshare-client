@@ -3,7 +3,7 @@
     // so it begins
     var App = {
 
-        // some helper vars
+        // some helper methods
         baseurl: function() { 
             var url = App.mode() === 'dev' ? 'http://localhost:3000' : 'http://incog.io'
             return url
@@ -14,22 +14,37 @@
             return mode
         }
         ,
+        // ya, kinda gross. but I need this so the App can decide which strategy to impl: desktop, mobile safari, or cordova
+        //
+        // desktop ... can do a file upload.
+        // ios ....... can do fuck all. hide the button!
+        // cordova ... can use the camera api.
+        //
         context: function() {
-            // desktop, ios web, android web, cordova
-            return ctx
+            if (window.Cordova) return 'cordova'
+            if (navigator.userAgent.toLowerCase().search(/iphone|ipod|ipad/) > 0) return 'ios'
+            return 'desktop'
         }
         ,
         // let them come
         init: function() {
             
-            // listen for click events on the button
             $('#refresh').tap(App.index)
-            $('#snap').tap(App.snap)
-
-            if (navigator.userAgent.toLowerCase().search(/iphone|ipod|ipad/)) {
-                 $('#fileselect').hide()   
-            } 
+            $('button.close').tap(function(e) {
+                e.target.parentNode.style.display = 'none'
+            })
+            // pick our app strategy
+            if (App.context() === 'cordova') {
+                // bind to camera api call
+                $('#snap').tap(App.snap)
+            } else if (App.context() === 'ios') {
+                // can do fuck all
+                $('#snap').remove()
+                $('#snap-divider').hide()
+            }
             else {
+                $('#snap').remove()
+                $('#tools').append('<li><a id=snap><input id=fileselect type=file accept=image/*;capture=camera></a></li>')
                 $('#fileselect').on('change', App.formPost)
             }
 
@@ -46,33 +61,30 @@
             $.getJSON(url, function(thumbs){
                 $('#pics').html('')
                 thumbs.forEach(function(thumb){
-                    $('#pics').append('<img class=pic src=' + thumb.src + '>')
+                    var src = 'http://proxy.boxresizer.com/convert?resize=90x90&shape=pad&source=' + thumb
+                    $('#pics').append('<a href=' + thumb + '><img class=pic src=' + src + '></a>')
                 })
                 $('#refresh').removeClass('loading')
-                $('img.pic').tap(function(e) {
-                    alert(e.target.src)
-                })
             })
         }
         ,
         formPost: function(e) {
             var fd = new FormData()
             ,   xhr = new XMLHttpRequest()
-            
+            // grab the file
             fd.append('image', e.target.files[0])
-            
+            $('#refresh').addClass('loading')
+            // log out the progress for now
             xhr.upload.addEventListener('progress', function(e) {
-            
+                var percent = ~~(e.loaded * 100 / e.total)
+                console.log(percent)
             }, false)
-
+            // called when upload complete
             xhr.addEventListener('load', App.index, false)
-
             // xhr.addEventListener(“error”, uploadFailed, false);
             // xhr.addEventListener(“abort”, uploadCanceled, false);
-
             xhr.open('POST', App.baseurl(), true)
             xhr.send(fd)
-
         }
         ,
         // upload to the service
@@ -108,6 +120,11 @@
     
     // add logging if in dev mode
     if (App.mode() === 'dev') {   
+        
+        // really, this could be the case always
+        window.App = App
+
+        // instrument the App with some logging
         Object.keys(App).forEach(function(key) {
             var duck = App[key]
             //  punch
@@ -115,9 +132,11 @@
                 var args = [].slice.call(arguments)
                 console.log('enter App.' + key + ' with args:', args)
                 var result = duck.apply(App, args)
-                console.log('result App.' + key)
-                console.dir(result)
-                return result
+                if (typeof result != 'undefined') {
+                    console.log('result App.' + key)
+                    console.dir(result)
+                    return result
+                }
             }    
         })
     }

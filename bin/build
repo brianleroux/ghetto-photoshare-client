@@ -1,0 +1,9 @@
+#!/bin/sh
+
+rm -rf ./../ghetto-photoshare/public/*
+cp ./index.html ./../ghetto-photoshare/public/index.html
+cp ./app.css ./../ghetto-photoshare/public/app.css
+cp -r ./js ./../ghetto-photoshare/public/js
+cp -r ./img ./../ghetto-photoshare/public/img
+cp -r ./bootstrap ./../ghetto-photoshare/public/bootstrap
+
