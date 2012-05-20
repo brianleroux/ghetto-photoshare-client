@@ -29,8 +29,8 @@
         // let them come
         init: function() {
             
-            $('#refresh').tap(App.index)
-            $('button.close').tap(function(e) {
+            $('#refresh').click(App.index)
+            $('button.close').click(function(e) {
                 e.target.parentNode.style.display = 'none'
             })
             // pick our app strategy
@@ -47,11 +47,10 @@
                 $('#snap').remove()
                 $('#tools').append('<li><a id=snap><input id=fileselect type=file accept=image/*;capture=camera></a></li>')
                 $('#fileselect').on('change', App.formPost)
-                // also add tap event to desktop
+                /* also add tap event to desktop
                 $(document).delegate('body', 'click', function(e) {
-                    console.log(e.target)
                     $(e.target).trigger('tap')
-                })
+                })*/
             }
 
             // load the home screen mosaic
@@ -59,7 +58,10 @@
         }
         ,
         // draw index
-        index: function() {
+        index: function(e) {
+            try {
+                e.preventDefault()
+            } catch(e) {}
             // load local or remote
             var url = App.baseurl() + '/api/v1/img/'
             // made the refresh button rotate
@@ -72,6 +74,7 @@
                 })
                 $('#refresh').removeClass('loading')
             })
+            return false
         }
         ,
         formPost: function(e) {
