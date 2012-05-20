@@ -1,13 +1,37 @@
 ;(function(){
+
     // so it begins
     var App = {
 
+        // some helper vars
+        baseurl: function() { 
+            var url = App.mode() === 'dev' ? 'http://localhost:3000' : 'http://incog.io'
+            return url
+        }
+        ,
+        mode: function() { 
+            var mode = window.location.protocol === 'file:' ? 'dev' : 'prod'
+            return mode
+        }
+        ,
+        context: function() {
+            // desktop, ios web, android web, cordova
+            return ctx
+        }
+        ,
         // let them come
         init: function() {
+            
             // listen for click events on the button
             $('#refresh').tap(App.index)
             $('#snap').tap(App.snap)
-            $('#fileselect').on('change', App.formPost)
+
+            if (navigator.userAgent.toLowerCase().search(/iphone|ipod|ipad/)) {
+                 $('#fileselect').hide()   
+            } 
+            else {
+                $('#fileselect').on('change', App.formPost)
+            }
 
             // load the home screen mosaic
             App.index()
@@ -15,8 +39,11 @@
         ,
         // draw index
         index: function() {
+            // load local or remote
+            var url = App.baseurl() + '/api/v1/img/'
+            // made the refresh button rotate
             $('#refresh').addClass('loading')
-            $.getJSON('http://deep-flower-8321.herokuapp.com/api/v1/img/', function(thumbs){
+            $.getJSON(url, function(thumbs){
                 $('#pics').html('')
                 thumbs.forEach(function(thumb){
                     $('#pics').append('<img class=pic src=' + thumb.src + '>')
@@ -29,44 +56,29 @@
         }
         ,
         formPost: function(e) {
-            //  display an image
-            var reader = new FileReader()
-            ,   file = e.target.files[0]
-            ,   xhr = new XMLHttpRequest();
-            reader.onload = function(e) {
+            var fd = new FormData()
+            ,   xhr = new XMLHttpRequest()
+            
+            fd.append('image', e.target.files[0])
+            
+            xhr.upload.addEventListener('progress', function(e) {
+            
+            }, false)
 
-                /* create progress bar
-                var o = $id("progress");
-                var progress = o.appendChild(document.createElement("p"));
-                progress.appendChild(document.createTextNode("upload " + file.name));
-                // progress bar
-                xhr.upload.addEventListener("progress", function(e) {
-                    var pc = parseInt(100 - (e.loaded / e.total * 100));
-                    progress.style.backgroundPosition = pc + "% 0";
-                }, false);
-              */ 
-                 // file received/failed
-                 xhr.onreadystatechange = function(e) {
-                     //if (xhr.readyState == 4) progress.className = (xhr.status == 200 ? "success" : "failure");
-                     App.index()
-                 }
-                 xhr.open('POST', '//incog.io', true)
-                 //xhr.setRequestHeader('X_FILENAME', file.name)
-                 //xhr.setRequestHeader('Content-Type', file.type)
-                console.log(file)
-                 xhr.setRequestHeader("Content-Type", "multipart/form-data");
-                 xhr.setRequestHeader("X-File-Name", file.name);
-                 xhr.setRequestHeader("X-File-Size", file.size);
-                 xhr.setRequestHeader("X-File-Type", file.type)
-                 xhr.send(file)
-            }
-            reader.readAsDataURL(file)
+            xhr.addEventListener('load', App.index, false)
+
+            // xhr.addEventListener(“error”, uploadFailed, false);
+            // xhr.addEventListener(“abort”, uploadCanceled, false);
+
+            xhr.open('POST', App.baseurl(), true)
+            xhr.send(fd)
+
         }
         ,
         // upload to the service
         upload: function(imageURI) {
             var win  = function(r) { alert('Image uploaded successfully!') }
-            ,   fail = function(err) { alert("Ruh roh. Image failed to upload! Errorcode: " = err.code) }
+            ,   fail = function(err) { alert("Ruh roh. Image failed to upload! Errorcode: " + err.code) }
             ,   opts = new FileUploadOptions()
             ,   ft   = new FileTransfer()
             
@@ -75,7 +87,7 @@
             opts.mimeType = 'image/jpeg'
             opts.params   = {}
 
-            ft.upload(imageURI, 'http://deep-flower-8321.herokuapp.com', win, fail, opts);
+            ft.upload(imageURI, App.baseurl(), win, fail, opts);
         },
 
         // launch the camera app
@@ -93,8 +105,24 @@
             }
         }
     }
+    
+    // add logging if in dev mode
+    if (App.mode() === 'dev') {   
+        Object.keys(App).forEach(function(key) {
+            var duck = App[key]
+            //  punch
+            App[key] = function() {
+                var args = [].slice.call(arguments)
+                console.log('enter App.' + key + ' with args:', args)
+                var result = duck.apply(App, args)
+                console.log('result App.' + key)
+                console.dir(result)
+                return result
+            }    
+        })
+    }
 
     // lets go!
     $(document).on('deviceready', App.init)
-})()
 
+})();

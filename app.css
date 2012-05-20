@@ -7,8 +7,9 @@ body {
 }
 
 header {
+    width:100%;
     margin:0;
-    padding:10px;
+    padding:10px 0 10px 0;
     background: -moz-linear-gradient(-90deg,#003471,#448CCB);
     background: -webkit-gradient(linear, left top, left bottom, from(#003471), to(#448CCB));
     
@@ -35,13 +36,13 @@ header h1 {
 }
 
 header button {
+    border:none;
     height:60px;
     width:100px;
     background:none;
-    border:none;
-    -webkit-box-flex: 1;
-    -moz-box-flex: 1;
-    box-flex: 1;
+    -webkit-box-flex: .5;
+    -moz-box-flex: .5;
+    box-flex: .5;
 }
 
 header button img {
@@ -49,12 +50,12 @@ header button img {
     opacity:.7;
 }
 
+img#refresh {
+   opacity:0; 
+}
+
 #pics {
-    position:absolute;
-    top:75px;
     background:#fff;
-    min-width:480px;
-    margin:0 auto 0 auto;
     padding:5px 0 0 0;
     text-align:center;
 }
@@ -65,12 +66,18 @@ header button img {
     padding:0
 }
 
-#tools {
-    background:#fff;
+#fileselect {
+    font-size:5em; /*hacky, to get height for FF*/
+    opacity:0;
+    background:#eaeaea;
     border:1px solid #eaeaea;
-    border-radius:10px;
     padding:5px;
-    margin:5px;
+    position:absolute;
+    right:0;
+    top:0;
+    width:150px;
+    height:65px;
+
 }
 
 @-webkit-keyframes rotate {

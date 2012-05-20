@@ -3,7 +3,7 @@
         // fake deviceready event, ht @alunny
         function deviceready() {
             var e = document.createEvent('Events')
-            e.initEvent('deviceready')
+            e.initEvent('deviceready', true, true)
             document.dispatchEvent(e)
         }
 
